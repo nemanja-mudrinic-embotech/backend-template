@@ -1,0 +1,212 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Vehicle Service
+  description: This is the Vehicle Service API
+servers:
+  - url: /api/v1
+components:
+  schemas:
+    VehicleSingleFullResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        vehicleNumber:
+          type: string
+        vehicleName:
+          type: string
+        currentChargeLevel:
+          type: number
+        type:
+          type: string
+          enum:
+            - Small
+            - Big
+        status:
+          type: string
+          enum:
+            - Running
+            - Stopped
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - vehicleNumber
+        - vehicleName
+        - currentChargeLevel
+        - type
+        - status
+        - createdAt
+        - updatedAt
+    CreateVehicleRequest:
+      type: object
+      properties:
+        vehicleNumber:
+          type: string
+        vehicleName:
+          type: string
+        currentChargeLevel:
+          type: number
+        type:
+          type: string
+          enum:
+            - Small
+            - Big
+        status:
+          type: string
+          enum:
+            - Running
+            - Stopped
+      required:
+        - vehicleNumber
+        - vehicleName
+        - currentChargeLevel
+        - type
+        - status
+      example:
+        vehicleNumber: "124"
+        vehicleName: BMW
+        currentChargeLevel: 25
+        type: Big
+        status: Running
+    VehicleListFullResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/VehicleSingleFullResponse"
+        count:
+          type: number
+      required:
+        - items
+        - count
+  parameters: {}
+paths:
+  /api/v1/vehicles:
+    post:
+      tags:
+        - Vehicles
+      description: Create vehicle endpoint
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVehicleRequest"
+      responses:
+        "201":
+          description: Object with user data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleSingleFullResponse"
+    get:
+      tags:
+        - Vehicles
+      description: Get vehicles endpoint
+      parameters:
+        - schema:
+            anyOf:
+              - type: number
+              - type: string
+                pattern: \d+
+          required: false
+          name: limit
+          in: query
+        - schema:
+            anyOf:
+              - type: number
+              - type: string
+                pattern: \d+
+          required: false
+          name: offset
+          in: query
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          required: false
+          name: direction
+          in: query
+        - schema:
+            type: string
+          required: false
+          name: vehicleNumber
+          in: query
+        - schema:
+            type: string
+          required: false
+          name: vehicleName
+          in: query
+        - schema:
+            type: number
+          required: false
+          name: currentChargeLevel
+          in: query
+        - schema:
+            type: string
+            enum:
+              - Small
+              - Big
+          required: false
+          name: type
+          in: query
+        - schema:
+            type: string
+            enum:
+              - Running
+              - Stopped
+          required: false
+          name: status
+          in: query
+        - schema:
+            type: string
+          required: false
+          name: createdAt
+          in: query
+      responses:
+        "200":
+          description: Object with user data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleListFullResponse"
+  /api/v1/vehicles/{id}:
+    get:
+      tags:
+        - Vehicles
+      description: Get vehicles endpoint
+      parameters:
+        - schema:
+            type: string
+            example: "1212121"
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: Object with user data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleListFullResponse"
+              examples:
+                empty-list:
+                  items: []
+                  count: 0
+                full-list:
+                  items:
+                    - id: string
+                      vehicleNumber: string
+                      vehicleName: string
+                      currentChargeLevel: 0
+                      type: Small
+                      status: Running
+                      createdAt: string
+                      updatedAt: string
+                  count: 0
